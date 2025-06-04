@@ -216,19 +216,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </style>
 </head>
 <body>
-    <div class="cabecera">
-        <div class="titulo">EcoCusco</div>
-        <div class="menu">
-            <a href="./index.php">Inicio</a>
-            <a href="./reportes.php">Reportar</a>
-            <a href="#">Empresas</a>
-            <a href="./estadisticas.php">Estadísticas</a>
-        </div>
-        <div class="menu">
-            <a href="./login.php" class="ingresar">Ingresar</a>
-            <a href="./register.php" class="registrarse">Registrarse</a>
-        </div>
-    </div>
+    <!-- HEADER INCLUIDO DESDE components/header.php -->
+    <?php include 'components/header.php'; ?>
 
     <div class="contenedor">
         <h1>Reportar Residuos</h1>
