@@ -206,10 +206,9 @@ extract($datos); // Extraemos las variables para usarlas directamente
     <div class="cabecera">
         <div class="titulo">EcoCusco</div>
         <div class="menu">
-            <a href="#">Inicio</a>
+            <a href="./home-page.php">Inicio</a>
             <a href="./reportes.php">Reportar</a>
-            <a href="#">Empresas</a>
-            <a href="#">Estadísticas</a>
+            <a href="./index.php">Estadísticas</a>
         </div>
         <div class="menu">
             <a href="./login.php" class="ingresar">Ingresar</a>
