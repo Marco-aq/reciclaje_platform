@@ -3,7 +3,7 @@
 $host = 'localhost';
 $dbname = 'reciclaje_platform';
 $username = 'root'; // Cambia esto si tienes un usuario diferente
-$password = 'Miperritoeszeuz1'; // Cambia esto si tienes una contraseña configurada
+$password = ''; // Cambia esto si tienes una contraseña configurada
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               </div>";
         echo "<script>
                 setTimeout(function() {
-                    window.location.href = 'index.php';
+                    window.location.href = 'home-page.php';
                 }, 1500);
               </script>";
         exit;
