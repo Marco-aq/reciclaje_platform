@@ -5,7 +5,7 @@ session_start();
 $host = 'localhost';
 $dbname = 'reciclaje_platform';
 $username = 'root'; // Cambia esto si tienes un usuario diferente
-$password = 'Miperritoeszeuz1'; // Cambia esto si tienes una contraseña configurada
+$password = ''; // Cambia esto si tienes una contraseña configurada
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
@@ -67,17 +67,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       padding: 0;
       font-family: 'Poppins', sans-serif;
       background-color: #D1FAE5; /* Color de fondo */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      /* Elimina flex y height: 100vh para que el header quede arriba */
     }
 
     .row {
       display: flex;
       width: 90%;
-      max-width: 1200px; /* Asegura que no se desborde */
-      gap: 40px; /* Espacio visible entre los contenedores */
+      max-width: 1200px;
+      gap: 40px;
+      margin: 0 auto;
+      margin-top: 100px; /* Deja espacio para el header */
     }
 
     .left, .right {
@@ -154,6 +153,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </style>
 </head>
 <body>
+  <!-- HEADER INCLUIDO DESDE components/header.php -->
+  <?php include 'components/header.php'; ?>
+
   <div class="row">
     <div class="left">
       <img class="logo" src="https://i.pinimg.com/564x/a9/46/e3/a946e3253ead512044565855265b1635.jpg" alt="Logo de reciclaje">

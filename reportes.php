@@ -3,7 +3,7 @@
 $hostDB = '127.0.0.1';
 $nombreDB = 'reciclaje_platform';
 $usuarioDB = 'root';
-$password = 'Miperritoeszeuz1';
+$password = '';
 
 $hostPDO = "mysql:host=$hostDB;dbname=$nombreDB;charset=utf8";
 $conn = new PDO($hostPDO, $usuarioDB, $password);
