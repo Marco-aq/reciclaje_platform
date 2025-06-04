@@ -190,7 +190,6 @@
         <div class="menu">
             <a href="./home-page.php">Inicio</a>
             <a href="./reportes.php">Reportar</a>
-            <a href="#">Empresas</a>
             <a href="./index.php">Estadísticas</a>
         </div>
         <div class="menu">
