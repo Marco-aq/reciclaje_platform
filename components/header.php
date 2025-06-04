@@ -188,9 +188,9 @@
     <div class="cabecera">
         <div class="titulo">EcoCusco</div>
         <div class="menu">
-            <a href="./home-page.php">Inicio</a>
+            <a href="./index.php">Inicio</a>
             <a href="./reportes.php">Reportar</a>
-            <a href="./index.php">Estadísticas</a>
+            <a href="./estadisticas.php">Estadísticas</a>
         </div>
         <div class="menu">
             <a href="./login.php" class="ingresar">Ingresar</a>

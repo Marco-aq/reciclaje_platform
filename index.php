@@ -43,25 +43,8 @@
   </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
-    <div class="container">
-      <a class="navbar-brand" href="#"><i class="fas fa-recycle me-2"></i>EcoCusco</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav mx-auto">
-          <li class="nav-item"><a class="nav-link active" href="./home-page.php">Inicio</a></li>
-          <li class="nav-item"><a class="nav-link" href="./reportes.php">Reportar</a></li>
-          <li class="nav-item"><a class="nav-link" href="./estadisticas.php">Estadísticas</a></li>
-        </ul>
-        <div>
-          <a href="#" class="btn btn-outline-success me-2">Ingresar</a>
-          <a href="#" class="btn btn-success">Registrarse</a>
-        </div>
-      </div>
-    </div>
-  </nav>
+  <!-- HEADER INCLUIDO DESDE components/header.php -->
+  <?php include 'components/header.php'; ?>
 
   <section class="hero-section">
     <div class="container">
