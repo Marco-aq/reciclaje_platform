@@ -1,289 +1,204 @@
-<?php
-// index.php
-include('data/estadisticas.php');
-$datos = include('data/estadisticas.php');
-extract($datos); // Extraemos las variables para usarlas directamente
-?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Estadísticas de Reciclaje - EcoCusco</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- Estilos -->
-    <link rel="stylesheet" href="assets/css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoCusco - Gestión de Residuos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .hero-section {
+      background-color: #f8f9fa;
+      padding: 60px 0;
+    }
+    .features-section {
+      background-color: #ffffff;
+      padding: 40px 0;
+    }
+    .stats-section {
+      background-color: #009c5c;
+      color: white;
+      padding: 40px 0;
+      text-align: center;
+    }
+    .footer {
+      background-color: #212529;
+      color: white;
+      padding: 40px 0;
+    }
+    .footer a {
+      color: #ccc;
+      text-decoration: none;
+    }
+    .footer a:hover {
+      color: white;
+    }
+    .map-container {
+      padding: 40px 0;
+    }
+    .nav-link.active {
+      color: #009c5c !important;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-<style>
-        :root {
-            --verde-eco: #2E7D32;
-            --verde-claro: #C8E6C9;
-            --gris-fondo: #F5F5F5;
-            --gris-texto: #666;
-            --blanco: #FFFFFF;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: var(--gris-fondo);
-            margin: 0;
-            padding: 0;
-        }
-
-        .cabecera {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: var(--blanco);
-            padding: 10px 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .cabecera .titulo {
-            font-weight: bold;
-            font-size: 24px;
-            color: var(--verde-eco);
-        }
-
-        .cabecera .menu {
-            display: flex;
-            gap: 20px;
-        }
-
-        .cabecera .menu a {
-            color: var(--gris-texto);
-            text-decoration: none;
-            font-size: 16px;
-        }
-
-        .cabecera .menu a:hover {
-            color: var(--verde-eco);
-        }
-
-        .cabecera .menu a.registrarse {
-            background-color: var(--verde-eco);
-            color: var(--blanco);
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
-
-        .cabecera .menu a.registrarse:hover {
-            background-color: #1B5E20;
-        }
-
-        .cabecera .menu a.ingresar::before {
-            content: "👤";
-            margin-right: 5px;
-        }
-
-        .contenedor {
-            max-width: 800px;
-            margin: 20px auto;
-            background: var(--blanco);
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            color: var(--verde-eco);
-            text-align: left;
-            margin-bottom: 20px;
-            font-size: 28px;
-        }
-
-        .seccion {
-            margin-bottom: 25px;
-        }
-
-        .grupo-campos {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: var(--gris-texto);
-            font-weight: bold;
-        }
-
-        select, input, textarea, button {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--verde-claro);
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        button {
-            background-color: var(--verde-eco);
-            color: var(--blanco);
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #1B5E20;
-        }
-
-        .mapa {
-            height: 200px;
-            background: url('https://vagabondbuddha.com/wp-content/uploads/2018/07/null-40.jpeg') no-repeat center center;
-            background-size: cover;
-            border-radius: 5px;
-        }
-
-        .icono {
-            margin-right: 10px;
-        }
-
-        .boton {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background-color: var(--verde-eco);
-            color: var(--blanco);
-            padding: 12px 25px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .boton:hover {
-            background-color: #1B5E20;
-        }
-
-        .boton-ubicacion {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-        }
-
-        .boton-ubicacion button {
-            flex: 1;
-            margin: 0 5px;
-        }
-
-        .foto-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px dashed var(--gris-texto);
-            border-radius: 5px;
-            padding: 20px;
-            cursor: pointer;
-            color: var(--gris-texto);
-        }
-
-        .foto-label:hover {
-            background-color: var(--gris-fondo);
-        }
-
-        .foto-label span {
-            margin-left: 10px;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            color: var(--gris-texto);
-            font-size: 14px;
-        }
-
-        .boton-enviar {
-            display: flex;
-            justify-content: flex-end;
-        }
-    </style>
-</head>
-<body>
-    <div class="cabecera">
-        <div class="titulo">EcoCusco</div>
-        <div class="menu">
-            <a href="./home-page.php">Inicio</a>
-            <a href="./reportes.php">Reportar</a>
-            <a href="./index.php">Estadísticas</a>
+  <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+    <div class="container">
+      <a class="navbar-brand" href="#"><i class="fas fa-recycle me-2"></i>EcoCusco</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item"><a class="nav-link active" href="./home-page.php">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="./reportes.php">Reportar</a></li>
+          <li class="nav-item"><a class="nav-link" href="./estadisticas.php">Estadísticas</a></li>
+        </ul>
+        <div>
+          <a href="#" class="btn btn-outline-success me-2">Ingresar</a>
+          <a href="#" class="btn btn-success">Registrarse</a>
         </div>
-        <div class="menu">
-            <a href="./login.php" class="ingresar">Ingresar</a>
-            <a href="./register.php" class="registrarse">Registrarse</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero-section">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h1>Sistema de Gestión de Residuos Sólidos Urbanos en Cusco</h1>
+          <p>Plataforma colaborativa para reportar y gestionar puntos de acumulación de residuos mediante geolocalización y mapas interactivos.</p>
+          <a href="#" class="btn btn-success me-2">Reportar Residuos</a>
+          <a href="#" class="btn btn-outline-secondary">Ver Mapa</a>
+        </div>
+        <div class="col-md-6">
+          <img src="./pagina principal.png" alt="Gestión de Residuos" class="img-fluid rounded">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features-section py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Características Principales</h2>
+        <div class="row">
+            <!-- Reportes Geolocalizados -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 bg-light border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3">
+                            <i class="fas fa-map-marker-alt fa-2x text-success"></i>
+                        </div>
+                        <h4 class="card-title">Reportes Geolocalizados</h4>
+                        <p class="card-text">Reporta puntos de acumulación de residuos con ubicación exacta y evidencia fotográfica.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Directorio de Empresas -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 bg-light border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3">
+                            <i class="fas fa-building fa-2x text-success"></i>
+                        </div>
+                        <h4 class="card-title">Directorio de Empresas</h4>
+                        <p class="card-text">Accede a una base de datos de empresas de reciclaje y limpieza certificadas.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Integración API -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 bg-light border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3">
+                            <i class="fas fa-plug fa-2x text-success"></i>
+                        </div>
+                        <h4 class="card-title">Integración API</h4>
+                        <p class="card-text">Comunicación optimizada entre ciudadanos y empresas de recolección.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-<br>
+</section>
 
-<div class="stats-grid">
-    <?php foreach($estadisticas as $tipo => $d):
-        $cls = ($d['pct'] !== null ? ($d['pct'] >= 0 ? 'positive' : 'negative') : '');
-        $txt = ($d['pct'] !== null ? (($d['pct'] >= 0 ? '+' : '') . $d['pct'] . '%') : '—');
-    ?>
-    <div class="stat-card">
-        <h3><?= $tipo === 'Total' ? 'Total Reciclado' : $tipo ?></h3>
-        <div class="stat-value"><?= number_format($d['actual'], 2) ?> kg</div>
-        <div class="stat-trend <?= $cls ?>"><?= $txt ?> vs <?= $mesAnteriorObj->format('M Y') ?></div>
+<section class="map-container bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Mapa Interactivo de Residuos</h2>
+        
+        <div class="d-flex justify-content-end mb-4">
+            <button class="btn btn-outline-secondary me-2">
+                <i class="fas fa-filter me-1"></i> Filtrar
+            </button>
+            <button class="btn btn-success">
+                <i class="fas fa-plus me-1"></i> Nuevo Reporte
+            </button>
+        </div>
+        
+        <!-- Mapa de Google Maps -->
+        <div class="ratio ratio-16x9 mb-4">
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d124140.274301623!2d-71.9924992!3d-13.53195!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x916dd5cdcdfd5f3b%3A0x9e5e3a84d6f4b0a4!2sCusco%2C%20Peru!5e0!3m2!1sen!2sus!4v1620000000000!5m2!1sen!2sus" 
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy"
+                class="rounded shadow-sm">
+            </iframe>
+        </div>
+        
+
     </div>
-    <?php endforeach; ?>
-</div>
+</section>
 
-<div class="charts-container">
-    <div class="chart-card">
-        <h2>Progreso Mensual (<?= $anioActual ?>)</h2>
-        <canvas id="chartMensual"></canvas>
+  <section class="stats-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3"><h4>2,500+</h4><p>Reportes Realizados</p></div>
+        <div class="col-md-3"><h4>50+</h4><p>Empresas Registradas</p></div>
+        <div class="col-md-3"><h4>1,800+</h4><p>Problemas Resueltos</p></div>
+        <div class="col-md-3"><h4>15,000+</h4><p>Usuarios Activos</p></div>
+      </div>
     </div>
-    <div class="chart-card">
-        <h2>Distribución por Material</h2>
-        <canvas id="chartDistribucion"></canvas>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <h5>EcoCusco</h5>
+          <p>Trabajando juntos por una ciudad más limpia y sostenible.</p>
+        </div>
+        <div class="col-md-2">
+          <h6>Enlaces Rápidos</h6>
+          <ul class="list-unstyled">
+            <li><a href="#">Inicio</a></li>
+            <li><a href="#">Reportar</a></li>
+            <li><a href="#">Empresas</a></li>
+            <li><a href="#">Estadísticas</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h6>Contacto</h6>
+          <p><i class="fas fa-envelope me-2"></i>contacto@ecocusco.pe</p>
+          <p><i class="fas fa-phone me-2"></i>+51 984 123 456</p>
+          <p><i class="fas fa-map-marker-alt me-2"></i>Cusco, Perú</p>
+        </div>
+        <div class="col-md-3">
+          <h6>Síguenos</h6>
+          <a href="#" class="me-3"><i class="fab fa-facebook fa-lg"></i></a>
+          <a href="#" class="me-3"><i class="fab fa-twitter fa-lg"></i></a>
+          <a href="#"><i class="fab fa-instagram fa-lg"></i></a>
+        </div>
+      </div>
+      <div class="text-center mt-4">
+        <small>&copy; 2025 EcoCusco. Todos los derechos reservados.</small>
+      </div>
     </div>
-</div>
+  </footer>
 
-<div class="activity-table" id="actividad">
-    <div class="header">
-        <h2>Actividad Reciente</h2>
-    </div>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>Material</th>
-                <th>Cantidad</th>
-                <th>Ubicación</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody id="tablaActividades">
-            <?php foreach($reportes as $f): ?>
-            <tr>
-                <td><?= date('d/m/Y', strtotime($f['fecha_reporte'])) ?></td>
-                <td><?= $f['tipo_residuo'] ?></td>
-                <td><?= number_format($f['cantidad'], 2) ?> kg</td>
-                <td><?= $f['ubicacion_nombre'] ?></td>
-                <td><span class="status <?= str_replace(' ', '-', $f['estado']) ?>"><?= $f['estado'] ?></span></td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-
-    <!-- Botón de ver más debajo de la tabla -->
-    <div class="ver-mas-container">
-        <button id="verMas" onclick="cargarMas()">Ver más</button>
-    </div>
-</div>
-
-<!-- Pasar variables PHP a JS -->
-<script>
-    const meses = <?php echo json_encode($meses); ?>;
-    const valMensual = <?php echo json_encode($valMensual); ?>;
-    const mat = <?php echo json_encode($mat); ?>;
-    const valDist = <?php echo json_encode($valDist); ?>;
-</script>
-
-<script src="js/charts.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

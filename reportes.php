@@ -3,7 +3,7 @@
 $hostDB = '127.0.0.1';
 $nombreDB = 'reciclaje_platform';
 $usuarioDB = 'root';
-$password = 'Miperritoeszeuz1';
+$password = '';
 
 $hostPDO = "mysql:host=$hostDB;dbname=$nombreDB;charset=utf8";
 $conn = new PDO($hostPDO, $usuarioDB, $password);
@@ -219,10 +219,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="cabecera">
         <div class="titulo">EcoCusco</div>
         <div class="menu">
-            <a href="#">Inicio</a>
-            <a href="#">Reportar</a>
+            <a href="./index.php">Inicio</a>
+            <a href="./reportes.php">Reportar</a>
             <a href="#">Empresas</a>
-            <a href="./index.php">Estadísticas</a>
+            <a href="./estadisticas.php">Estadísticas</a>
         </div>
         <div class="menu">
             <a href="./login.php" class="ingresar">Ingresar</a>
