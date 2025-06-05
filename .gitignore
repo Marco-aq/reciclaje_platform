@@ -1,0 +1,105 @@
+# EcoCusco .gitignore
+
+# Archivos de configuración sensibles
+.env
+config.local.php
+
+# Logs
+logs/
+*.log
+
+# Archivos temporales
+tmp/
+temp/
+cache/
+
+# Archivos de uploads de usuarios
+uploads/
+storage/uploads/
+
+# Archivos de backup
+*.sql
+*.gz
+*.bak
+backup/
+
+# Archivos del sistema operativo
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Archivos del editor
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Dependencias de PHP
+vendor/
+composer.lock
+
+# Dependencias de Node.js (si se usan)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos de sesión
+sessions/
+*.sess
+
+# Archivos de caché
+cache/
+*.cache
+
+# Archivos de configuración de servidor web
+.htaccess.local
+nginx.local.conf
+
+# Archivos de desarrollo
+*.dev
+*.local
+*.test
+
+# Archivos de certificados SSL (si se almacenan localmente)
+*.pem
+*.key
+*.crt
+*.csr
+
+# Archivos de testing
+phpunit.xml
+.phpunit.result.cache
+tests/_output/
+
+# Variables de entorno específicas de desarrollo
+.env.local
+.env.development
+.env.testing
+.env.production
+
+# Archivos compilados
+*.min.js
+*.min.css
+dist/
+build/
+
+# Documentación generada
+docs/generated/
+api-docs/
+
+# Archivos de profiling
+*.prof
+xhprof/
+
+# Archivos de error específicos
+error.log
+access.log
+php_errors.log
