@@ -1,200 +1,165 @@
-<style>
-        :root {
-            --verde-eco: #2E7D32;
-            --verde-claro: #C8E6C9;
-            --gris-fondo: #F5F5F5;
-            --gris-texto: #666;
-            --blanco: #FFFFFF;
-        }
+<?php
+/**
+ * Header Component - Navegación Principal
+ */
 
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: var(--gris-fondo);
-            margin: 0;
-            padding: 0;
-        }
+// Obtener mensajes flash para mostrar
+$flashMessages = getFlashMessages();
+?>
 
-        .cabecera {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: var(--blanco);
-            padding: 10px 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container">
+        <!-- Brand -->
+        <a class="navbar-brand fw-bold" href="<?= url() ?>">
+            <i class="fas fa-recycle me-2 text-success"></i>
+            EcoCusco
+        </a>
 
-        .cabecera .titulo {
-            font-weight: bold;
-            font-size: 24px;
-            color: var(--verde-eco);
-        }
+        <!-- Mobile toggle button -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-        .cabecera .menu {
-            display: flex;
-            gap: 20px;
-        }
+        <!-- Navigation items -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= url() ?>">
+                        <i class="fas fa-home me-1"></i>Inicio
+                    </a>
+                </li>
+                
+                <?php if (isLoggedIn()): ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= url('../pages/dashboard.php') ?>">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= url('../pages/reportes.php') ?>">
+                            <i class="fas fa-chart-bar me-1"></i>Reportes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= url('../pages/estadisticas.php') ?>">
+                            <i class="fas fa-chart-pie me-1"></i>Estadísticas
+                        </a>
+                    </li>
+                    
+                    <?php if (isAdmin()): ?>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-cog me-1"></i>Administración
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="<?= url('../pages/admin/usuarios.php') ?>">
+                                    <i class="fas fa-users me-2"></i>Usuarios
+                                </a></li>
+                                <li><a class="dropdown-item" href="<?= url('../pages/admin/configuracion.php') ?>">
+                                    <i class="fas fa-cogs me-2"></i>Configuración
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="<?= url('../pages/admin/logs.php') ?>">
+                                    <i class="fas fa-file-alt me-2"></i>Logs del Sistema
+                                </a></li>
+                            </ul>
+                        </li>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </ul>
 
-        .cabecera .menu a {
-            color: var(--gris-texto);
-            text-decoration: none;
-            font-size: 16px;
-        }
-
-        .cabecera .menu a:hover {
-            color: var(--verde-eco);
-        }
-
-        .cabecera .menu a.registrarse {
-            background-color: var(--verde-eco);
-            color: var(--blanco);
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
-
-        .cabecera .menu a.registrarse:hover {
-            background-color: #1B5E20;
-        }
-
-        .cabecera .menu a.ingresar::before {
-            content: "👤";
-            margin-right: 5px;
-        }
-
-        .contenedor {
-            max-width: 800px;
-            margin: 20px auto;
-            background: var(--blanco);
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            color: var(--verde-eco);
-            text-align: left;
-            margin-bottom: 20px;
-            font-size: 28px;
-        }
-
-        .seccion {
-            margin-bottom: 25px;
-        }
-
-        .grupo-campos {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: var(--gris-texto);
-            font-weight: bold;
-        }
-
-        select, input, textarea, button {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--verde-claro);
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        button {
-            background-color: var(--verde-eco);
-            color: var(--blanco);
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #1B5E20;
-        }
-
-        .mapa {
-            height: 200px;
-            background: url('https://vagabondbuddha.com/wp-content/uploads/2018/07/null-40.jpeg') no-repeat center center;
-            background-size: cover;
-            border-radius: 5px;
-        }
-
-        .icono {
-            margin-right: 10px;
-        }
-
-        .boton {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background-color: var(--verde-eco);
-            color: var(--blanco);
-            padding: 12px 25px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .boton:hover {
-            background-color: #1B5E20;
-        }
-
-        .boton-ubicacion {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-        }
-
-        .boton-ubicacion button {
-            flex: 1;
-            margin: 0 5px;
-        }
-
-        .foto-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px dashed var(--gris-texto);
-            border-radius: 5px;
-            padding: 20px;
-            cursor: pointer;
-            color: var(--gris-texto);
-        }
-
-        .foto-label:hover {
-            background-color: var(--gris-fondo);
-        }
-
-        .foto-label span {
-            margin-left: 10px;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            color: var(--gris-texto);
-            font-size: 14px;
-        }
-
-        .boton-enviar {
-            display: flex;
-            justify-content: flex-end;
-        }
-    </style>
-</head>
-<body>
-    <div class="cabecera">
-        <div class="titulo">EcoCusco</div>
-        <div class="menu">
-            <a href="./index.php">Inicio</a>
-            <a href="./reportes.php">Reportar</a>
-            <a href="./estadisticas.php">Estadísticas</a>
-        </div>
-        <div class="menu">
-            <a href="./login.php" class="ingresar">Ingresar</a>
-            <a href="./register.php" class="registrarse">Registrarse</a>
+            <!-- User menu -->
+            <ul class="navbar-nav">
+                <?php if (isLoggedIn()): ?>
+                    <?php $currentUser = getCurrentUser(); ?>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i>
+                            <?= e($currentUser['nombre'] ?? 'Usuario') ?>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="<?= url('../pages/perfil.php') ?>">
+                                    <i class="fas fa-user me-2"></i>Mi Perfil
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="<?= url('../pages/configuracion.php') ?>">
+                                    <i class="fas fa-cog me-2"></i>Configuración
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="<?= url('../pages/logout.php') ?>" onclick="return confirm('¿Estás seguro de que quieres cerrar sesión?')">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                <?php else: ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= url('../pages/login.php') ?>">
+                            <i class="fas fa-sign-in-alt me-1"></i>Iniciar Sesión
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-success btn-sm text-white ms-2" href="<?= url('../pages/register.php') ?>">
+                            <i class="fas fa-user-plus me-1"></i>Registrarse
+                        </a>
+                    </li>
+                <?php endif; ?>
+            </ul>
         </div>
     </div>
-<br>
+</nav>
+
+<!-- Flash Messages -->
+<?php if (!empty($flashMessages)): ?>
+    <div class="container mt-3">
+        <?php foreach ($flashMessages as $message): ?>
+            <div class="alert alert-<?= $message['type'] === 'error' ? 'danger' : $message['type'] ?> alert-dismissible fade show" role="alert">
+                <?php
+                $icon = match($message['type']) {
+                    'success' => 'fas fa-check-circle',
+                    'error' => 'fas fa-exclamation-triangle',
+                    'warning' => 'fas fa-exclamation-circle',
+                    'info' => 'fas fa-info-circle',
+                    default => 'fas fa-info-circle'
+                };
+                ?>
+                <i class="<?= $icon ?> me-2"></i>
+                <?= e($message['message']) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>
+
+<!-- Breadcrumb (opcional, para páginas internas) -->
+<?php if (isset($breadcrumbs) && !empty($breadcrumbs)): ?>
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="<?= url() ?>" class="text-decoration-none">
+                        <i class="fas fa-home me-1"></i>Inicio
+                    </a>
+                </li>
+                <?php foreach ($breadcrumbs as $breadcrumb): ?>
+                    <?php if (isset($breadcrumb['url'])): ?>
+                        <li class="breadcrumb-item">
+                            <a href="<?= e($breadcrumb['url']) ?>" class="text-decoration-none">
+                                <?= e($breadcrumb['title']) ?>
+                            </a>
+                        </li>
+                    <?php else: ?>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <?= e($breadcrumb['title']) ?>
+                        </li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </ol>
+        </nav>
+    </div>
+<?php endif; ?>
