@@ -1,0 +1,33 @@
+{
+    "name": "ecocusco/reciclaje-platform",
+    "description": "Plataforma de gestión de residuos sólidos urbanos para Cusco",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "EcoCusco Team",
+            "email": "info@ecocusco.pe"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "ext-pdo": "*",
+        "ext-json": "*",
+        "vlucas/phpdotenv": "^5.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

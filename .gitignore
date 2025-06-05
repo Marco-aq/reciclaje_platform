@@ -1,0 +1,52 @@
+# Vendor directory
+/vendor/
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.staging
+.env.testing
+
+# Logs
+/storage/logs/*.log
+!/storage/logs/.gitkeep
+
+# Cache
+/storage/cache/*
+!/storage/cache/.gitkeep
+
+# Uploads
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+
+# Node modules (si se usa)
+node_modules/
+
+# PHP specific
+*.log
+.phpunit.result.cache
+
+# Database
+*.sqlite
+*.db
