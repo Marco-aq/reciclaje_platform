@@ -1,24 +1,93 @@
-# Vendor directory
-/vendor/
+# PHP
+*.log
+*.tmp
+*.cache
+*.bak
+*.swp
+*.swo
+*~
 
-# Environment variables
+# Composer
+/vendor/
+composer.phar
+composer.lock
+
+# Environment files
 .env
 .env.local
-.env.production
-.env.staging
-.env.testing
+.env.*.local
+
+# IDE and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+
+# System files
+*.pid
+*.seed
+*.pid.lock
 
 # Logs
-/storage/logs/*.log
-!/storage/logs/.gitkeep
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Cache
-/storage/cache/*
-!/storage/cache/.gitkeep
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
 
-# Uploads
-/public/uploads/*
-!/public/uploads/.gitkeep
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Dependency directories
+node_modules/
+vendor/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Build directories
+dist/
+build/
+
+# Cache files
+storage/cache/*
+storage/logs/*
+storage/sessions/*
+storage/tmp/*
+!storage/.gitkeep
+!storage/cache/.gitkeep
+!storage/logs/.gitkeep
+!storage/sessions/.gitkeep
+!storage/tmp/.gitkeep
+
+# Config files (keep examples)
+config/local.php
+config/production.php
+config/development.php
+
+# User uploads
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Temporary files
+tmp/
+temp/
+*.tmp
 
 # OS generated files
 .DS_Store
@@ -29,24 +98,71 @@
 ehthumbs.db
 Thumbs.db
 
-# IDE files
-.vscode/
+# PhpStorm
 .idea/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/
+
+# Vim
 *.swp
 *.swo
 *~
 
-# Temporary files
-*.tmp
-*.temp
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
 
-# Node modules (si se usa)
-node_modules/
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
 
-# PHP specific
-*.log
-.phpunit.result.cache
+# Linux
+*~
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
 
 # Database
 *.sqlite
+*.sqlite3
 *.db
+
+# Backup files
+*.backup
+*.bak
+
+# Error logs
+error_log
+error.log
+
+# PHP specific
+opcache/
+session/
+
+# Development tools
+phpunit.xml
+.phpunit.result.cache
