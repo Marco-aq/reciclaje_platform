@@ -56,7 +56,7 @@
           <a href="#" class="btn btn-outline-secondary">Ver Mapa</a>
         </div>
         <div class="col-md-6">
-          <img src="./pagina principal.png" alt="Gestión de Residuos" class="img-fluid rounded">
+          <img src="https://gestorderesiduosmadrid.es/wp-content/uploads/2023/05/La-mala-gestion-de-los-residuos-y-sus-consecuencias-scaled.jpg" alt="Gestión de Residuos" class="img-fluid rounded">
         </div>
       </div>
     </div>

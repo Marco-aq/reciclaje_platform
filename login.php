@@ -5,7 +5,7 @@ session_start();
 $host = 'localhost';
 $dbname = 'reciclaje_platform';
 $username = 'root'; // Cambia esto si tienes un usuario diferente
-$password = ''; // Cambia esto si tienes una contraseña configurada
+$password = 'Miperritoeszeuz1'; // Cambia esto si tienes una contraseña configurada
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);

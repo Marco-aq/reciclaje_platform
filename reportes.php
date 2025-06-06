@@ -3,23 +3,39 @@
 $hostDB = '127.0.0.1';
 $nombreDB = 'reciclaje_platform';
 $usuarioDB = 'root';
-$password = '';
+$password = 'Miperritoeszeuz1';
 
-$hostPDO = "mysql:host=$hostDB;dbname=$nombreDB;charset=utf8";
-$conn = new PDO($hostPDO, $usuarioDB, $password);
+try {
+    $hostPDO = "mysql:host=$hostDB;dbname=$nombreDB;charset=utf8";
+    $conn = new PDO($hostPDO, $usuarioDB, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Error de conexión: " . $e->getMessage());
+}
 
 // Procesar formulario
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validar y sanitizar entradas
-    $ubicacion = htmlspecialchars($_POST['ubicacion']);
-    $tipo_residuo = isset($_POST['tipo_residuo']) ? implode(', ', $_POST['tipo_residuo']) : ''; // Combina los valores seleccionados
-    $descripcion = htmlspecialchars($_POST['descripcion']);
+    $descripcion = htmlspecialchars($_POST['descripcion'] ?? '');
     
-    // Insertar en base de datos
-    $stmt = $conn->prepare("INSERT INTO reportes (ubicacion, tipo_residuo, descripcion) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $ubicacion, $tipo_residuo, $descripcion);
-    $stmt->execute();
-    $stmt->close();
+    // Incorporar ubicación en la descripción
+    $ubicacion = htmlspecialchars($_POST['ubicacion'] ?? '');
+    $descripcion_completa = "Ubicación: $ubicacion\n\n$descripcion";
+    
+    $tipo_residuo = isset($_POST['tipo_residuo']) ? implode(', ', $_POST['tipo_residuo']) : '';
+
+    // Insertar en base de datos usando solo las columnas existentes
+    try {
+        $sql = "INSERT INTO reportes (tipo_residuo, descripcion) VALUES (?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$tipo_residuo, $descripcion_completa]);
+        
+        // Redireccionar para evitar reenvío del formulario
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
+    } catch (PDOException $e) {
+        die("Error al guardar el reporte: " . $e->getMessage());
+    }
 }
 ?>
 
@@ -144,9 +160,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .mapa {
-            height: 200px;
-            background: url('https://vagabondbuddha.com/wp-content/uploads/2018/07/null-40.jpeg') no-repeat center center;
-            background-size: cover;
+            height: 400px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .mapa-iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
             border-radius: 5px;
         }
 
@@ -213,114 +235,161 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             display: flex;
             justify-content: flex-end;
         }
+
+        .preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .preview-container img {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .success-message {
+            background-color: #dff0d8;
+            border: 1px solid #d6e9c6;
+            color: #3c763d;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
     <!-- HEADER INCLUIDO DESDE components/header.php -->
     <?php include 'components/header.php'; ?>
 
-    <div class="contenedor">
-        <h1>Reportar Residuos</h1>
-        
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" enctype="multipart/form-data">
-            <!-- Sección Ubicación -->
-            <div class="seccion">
-                <h2>Ubicación</h2>
-                <div class="mapa"></div>
-                <div class="boton-ubicacion">
-                    <button type="button" class="boton">
-                        <span class="icono">📍</span> Usar ubicación actual
-                    </button>
-                    <button type="button" class="boton">
-                        <span class="icono">📌</span> Seleccionar en mapa
-                    </button>
-                </div>
+<div class="contenedor">
+    <h1>Reportar Residuos</h1>
+    
+    <?php if ($_SERVER["REQUEST_METHOD"] == "POST"): ?>
+        <div class="success-message">
+            ¡Reporte enviado exitosamente! Gracias por contribuir a un Cusco más limpio.
+        </div>
+    <?php endif; ?>
+    
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+        <!-- Sección Ubicación -->
+        <div class="seccion">
+            <h2>Ubicación</h2>
+            <input type="text" id="direccion" name="ubicacion" 
+                   placeholder="Ingrese dirección o seleccione en el mapa" 
+                   required 
+                   style="width: 100%; padding: 10px; margin-bottom: 15px;">
+            
+            <div class="mapa">
+                <iframe 
+                    id="mapa-iframe"
+                    class="mapa-iframe"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d124140.274301623!2d-71.9924992!3d-13.53195!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x916dd5cdcdfd5f3b%3A0x9e5e3a84d6f4b0a4!2sCusco%2C%20Peru!5e0!3m2!1sen!2sus!4v1620000000000!5m2!1sen!2sus" 
+                    allowfullscreen 
+                    loading="lazy">
+                </iframe>
             </div>
-
-            <!-- Sección Tipo de Residuo -->
-            <div class="seccion">
-                <h2>Tipo de Residuo</h2>
-                <div class="grupo-campos">
-                    <div>
-                        <label>
-                            <input type="checkbox" name="tipo_residuo[]" value="Plásticos" class="tipo-residuo">
-                            <span class="icono">🍼</span> Plásticos
-                        </label>
-                    </div>
-                    <div>
-                        <label>
-                            <input type="checkbox" name="tipo_residuo[]" value="Papel/Cartón" class="tipo-residuo">
-                            <span class="icono">📄</span> Papel/Cartón
-                        </label>
-                    </div>
-                    <div>
-                        <label>
-                            <input type="checkbox" name="tipo_residuo[]" value="Vidrio" class="tipo-residuo">
-                            <span class="icono">🍾</span> Vidrio
-                        </label>
-                    </div>
-                    <div>
-                        <label>
-                            <input type="checkbox" name="tipo_residuo[]" value="Electrónicos" class="tipo-residuo">
-                            <span class="icono">💻</span> Electrónicos
-                        </label>
-                    </div>
-                    <div>
-                        <label>
-                            <input type="checkbox" name="tipo_residuo[]" value="Orgánicos" class="tipo-residuo">
-                            <span class="icono">🍂</span> Orgánicos
-                        </label>
-                    </div>
-                    <div>
-                        <label>
-                            <input type="checkbox" name="tipo_residuo[]" value="Otros" class="tipo-residuo">
-                            <span class="icono">❓</span> Otros
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sección Fotos -->
-            <div class="seccion">
-                <h2>Fotografías</h2>
-                <label class="foto-label">
-                    <span class="icono">📷</span>
-                    <span>Agregar foto</span>
-                    <input type="file" name="fotos[]" accept="image/*" multiple style="display: none;">
-                </label>
-            </div>
-
-            <!-- Sección Descripción -->
-            <div class="seccion">
-                <h2>Descripción</h2>
-                <textarea name="descripcion" rows="4" placeholder="Describe los detalles del residuo y la situación..."></textarea>
-            </div>
-
-            <div class="boton-enviar">
-                <button type="button" class="boton">
-                    <span class="icono">📤</span> Enviar Reporte
+            
+            <div class="boton-ubicacion">
+                <button type="button" id="btn-confirmar" class="boton">
+                    <span class="icono">📍</span> Confirmar ubicación seleccionada
                 </button>
             </div>
-        </form>
-    </div>
+        </div>
 
-    <footer>
-        © 2025 EcoCusco. Todos los derechos reservados.
-    </footer>
+        <!-- Sección Tipo de Residuo -->
+        <div class="seccion">
+            <h2>Tipo de Residuo</h2>
+            <div class="grupo-campos">
+                <div>
+                    <label>
+                        <input type="checkbox" name="tipo_residuo[]" value="Plásticos" class="tipo-residuo">
+                        <span class="icono">🍼</span> Plásticos
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        <input type="checkbox" name="tipo_residuo[]" value="Papel/Cartón" class="tipo-residuo">
+                        <span class="icono">📄</span> Papel/Cartón
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        <input type="checkbox" name="tipo_residuo[]" value="Vidrio" class="tipo-residuo">
+                        <span class="icono">🍾</span> Vidrio
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        <input type="checkbox" name="tipo_residuo[]" value="Electrónicos" class="tipo-residuo">
+                        <span class="icono">💻</span> Electrónicos
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        <input type="checkbox" name="tipo_residuo[]" value="Orgánicos" class="tipo-residuo">
+                        <span class="icono">🍂</span> Orgánicos
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        <input type="checkbox" name="tipo_residuo[]" value="Otros" class="tipo-residuo">
+                        <span class="icono">❓</span> Otros
+                    </label>
+                </div>
+            </div>
+        </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const checkboxes = document.querySelectorAll('.tipo-residuo');
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function () {
-                    const selected = document.querySelectorAll('.tipo-residuo:checked');
-                    if (selected.length > 3) {
-                        this.checked = false; // Desmarca la casilla si ya hay 3 seleccionadas
-                        alert('Solo puedes seleccionar hasta 3 tipos de residuos.');
-                    }
-                });
+        <!-- Sección Descripción -->
+        <div class="seccion">
+            <h2>Descripción</h2>
+            <textarea name="descripcion" rows="4" placeholder="Describe los detalles del residuo y la situación..." required></textarea>
+        </div>
+
+        <div class="boton-enviar">
+            <button type="submit" class="boton">
+                <span class="icono">📤</span> Enviar Reporte
+            </button>
+        </div>
+    </form>
+</div>
+
+<footer>
+    © 2025 EcoCusco. Todos los derechos reservados.
+</footer>
+
+<script>
+    // Limitar selección de residuos (máximo 3)
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.tipo-residuo');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const selected = document.querySelectorAll('.tipo-residuo:checked');
+                if (selected.length > 3) {
+                    this.checked = false;
+                    alert('Solo puedes seleccionar hasta 3 tipos de residuos.');
+                }
             });
         });
-    </script>
+        
+        // Botón de confirmación de ubicación
+        document.getElementById('btn-confirmar').addEventListener('click', function() {
+            const direccion = document.getElementById('direccion').value;
+            if (!direccion) {
+                alert('Por favor ingrese una dirección');
+                return;
+            }
+            
+            // Actualizar el mapa con la nueva ubicación
+            const encodedDireccion = encodeURIComponent(direccion);
+            const mapa = document.getElementById('mapa-iframe');
+            mapa.src = `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodedDireccion}`;
+            
+            alert('Ubicación confirmada: ' + direccion);
+        });
+    });
+</script>
 </body>
 </html>
