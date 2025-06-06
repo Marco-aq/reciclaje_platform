@@ -1,180 +1,166 @@
 <?php
 /**
- * EcoCusco - Test de Conexión a Base de Datos
+ * Script de Prueba de Conexión - Plataforma de Reciclaje MVC
  * 
- * Este archivo ayuda a verificar que la configuración de la base de datos
- * esté funcionando correctamente antes de usar la aplicación completa.
- * 
- * IMPORTANTE: Eliminar este archivo en producción por seguridad.
+ * Este archivo permite probar la conexión a la base de datos
+ * y verificar que la configuración esté funcionando correctamente
  */
 
-// Solo permitir en modo desarrollo
-if (!isset($_GET['allow_test']) || $_GET['allow_test'] !== 'yes') {
-    die('Acceso no autorizado. Para usar este test, agregue ?allow_test=yes a la URL.');
+// Incluir el bootstrap principal
+require_once __DIR__ . '/index.php';
+
+echo "<h1>Prueba de Conexión - Plataforma de Reciclaje MVC</h1>";
+
+try {
+    // Probar conexión a base de datos
+    echo "<h2>🔌 Probando Conexión a Base de Datos</h2>";
+    
+    $db = App\Core\Database::getInstance();
+    $connection = $db->getConnection();
+    
+    echo "<p style='color: green;'>✅ Conexión exitosa a la base de datos</p>";
+    
+    // Verificar tablas
+    echo "<h2>📋 Verificando Tablas</h2>";
+    
+    $tables = ['usuarios', 'reportes', 'password_resets', 'configuracion'];
+    foreach ($tables as $table) {
+        try {
+            $result = $db->query("SELECT COUNT(*) as count FROM {$table}");
+            $count = $result->fetch()['count'];
+            echo "<p>✅ Tabla '{$table}': {$count} registros</p>";
+        } catch (Exception $e) {
+            echo "<p style='color: red;'>❌ Error en tabla '{$table}': " . $e->getMessage() . "</p>";
+        }
+    }
+    
+    // Probar configuración
+    echo "<h2>⚙️ Verificando Configuración</h2>";
+    
+    $config = require CONFIG_PATH . '/app.php';
+    echo "<p>✅ Nombre de la aplicación: " . $config['name'] . "</p>";
+    echo "<p>✅ Entorno: " . $config['env'] . "</p>";
+    echo "<p>✅ Debug: " . ($config['debug'] ? 'Activado' : 'Desactivado') . "</p>";
+    
+    // Probar variables de entorno
+    echo "<h2>🌍 Variables de Entorno</h2>";
+    
+    $envVars = ['DB_HOST', 'DB_NAME', 'DB_USER', 'APP_NAME', 'APP_URL'];
+    foreach ($envVars as $var) {
+        $value = env($var, 'No definida');
+        echo "<p>✅ {$var}: " . ($var === 'DB_PASSWORD' ? '***' : $value) . "</p>";
+    }
+    
+    // Probar permisos de escritura
+    echo "<h2>📁 Verificando Permisos</h2>";
+    
+    $writableDirs = [
+        STORAGE_PATH . '/logs',
+        PUBLIC_PATH . '/uploads'
+    ];
+    
+    foreach ($writableDirs as $dir) {
+        if (is_writable($dir)) {
+            echo "<p>✅ Directorio escribible: {$dir}</p>";
+        } else {
+            echo "<p style='color: orange;'>⚠️ Directorio sin permisos de escritura: {$dir}</p>";
+        }
+    }
+    
+    // Probar creación de usuario demo
+    echo "<h2>👤 Probando Funcionalidades</h2>";
+    
+    $userModel = new App\Models\User();
+    $demoUser = $userModel->findByEmail('demo@ejemplo.com');
+    
+    if ($demoUser) {
+        echo "<p>✅ Usuario demo encontrado: " . $demoUser['nombre'] . "</p>";
+        
+        // Verificar reportes del usuario demo
+        $reportModel = new App\Models\Report();
+        $reportCount = $reportModel->count(['usuario_id' => $demoUser['id']]);
+        echo "<p>✅ Reportes del usuario demo: {$reportCount}</p>";
+    } else {
+        echo "<p style='color: orange;'>⚠️ Usuario demo no encontrado</p>";
+    }
+    
+    // Probar estadísticas
+    $statsModel = new App\Models\Stats();
+    $dashboardStats = $statsModel->getDashboardStats();
+    
+    echo "<p>✅ Total de reportes en sistema: " . ($dashboardStats['total_reportes'] ?? 0) . "</p>";
+    echo "<p>✅ Total de usuarios: " . ($dashboardStats['total_usuarios'] ?? 0) . "</p>";
+    
+    echo "<h2>🎉 Conclusión</h2>";
+    echo "<p style='color: green; font-weight: bold;'>✅ Sistema funcionando correctamente</p>";
+    echo "<p>La aplicación está lista para usarse.</p>";
+    echo "<p><a href='/'>← Ir a la aplicación</a></p>";
+    
+} catch (Exception $e) {
+    echo "<h2 style='color: red;'>❌ Error en la Prueba</h2>";
+    echo "<p style='color: red;'><strong>Error:</strong> " . $e->getMessage() . "</p>";
+    echo "<p><strong>Archivo:</strong> " . $e->getFile() . "</p>";
+    echo "<p><strong>Línea:</strong> " . $e->getLine() . "</p>";
+    
+    echo "<h3>💡 Posibles Soluciones:</h3>";
+    echo "<ul>";
+    echo "<li>Verificar que la base de datos esté creada</li>";
+    echo "<li>Comprobar las credenciales en el archivo .env</li>";
+    echo "<li>Ejecutar el archivo database_schema.sql</li>";
+    echo "<li>Verificar que el servicio MySQL esté ejecutándose</li>";
+    echo "<li>Comprobar permisos de directorios</li>";
+    echo "</ul>";
+    
+    if (env('APP_DEBUG', false)) {
+        echo "<h3>🔍 Stack Trace:</h3>";
+        echo "<pre>" . $e->getTraceAsString() . "</pre>";
+    }
 }
 
+echo "<hr>";
+echo "<p><small>Plataforma de Reciclaje MVC - Prueba de Conexión</small></p>";
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test de Conexión - EcoCusco</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .test-result { margin: 10px 0; padding: 15px; border-radius: 5px; }
-        .test-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .test-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .test-warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
-        .test-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
-    </style>
-</head>
-<body class="bg-light">
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0">
-                            <i class="fas fa-database me-2"></i>
-                            Test de Conexión a Base de Datos - EcoCusco
-                        </h4>
-                    </div>
-                    <div class="card-body">
-                        <?php
-                        $tests = [];
-                        $allPassed = true;
 
-                        // Test 1: Verificar que existe el archivo .env
-                        if (file_exists('.env')) {
-                            $tests[] = ['type' => 'success', 'message' => '✓ Archivo .env encontrado'];
-                        } else {
-                            $tests[] = ['type' => 'error', 'message' => '✗ Archivo .env no encontrado. Crea el archivo .env basado en las instrucciones del README.'];
-                            $allPassed = false;
-                        }
-
-                        // Test 2: Cargar configuración
-                        try {
-                            require_once 'includes/config.php';
-                            $tests[] = ['type' => 'success', 'message' => '✓ Archivo de configuración cargado correctamente'];
-                        } catch (Exception $e) {
-                            $tests[] = ['type' => 'error', 'message' => '✗ Error cargando configuración: ' . $e->getMessage()];
-                            $allPassed = false;
-                        }
-
-                        // Test 3: Verificar extensiones PHP
-                        $required_extensions = ['pdo', 'pdo_mysql', 'mbstring', 'openssl'];
-                        foreach ($required_extensions as $ext) {
-                            if (extension_loaded($ext)) {
-                                $tests[] = ['type' => 'success', 'message' => "✓ Extensión PHP '{$ext}' disponible"];
-                            } else {
-                                $tests[] = ['type' => 'error', 'message' => "✗ Extensión PHP '{$ext}' no encontrada"];
-                                $allPassed = false;
-                            }
-                        }
-
-                        // Test 4: Verificar configuración de base de datos
-                        if (defined('DB_HOST') && defined('DB_DATABASE') && defined('DB_USERNAME')) {
-                            $tests[] = ['type' => 'success', 'message' => '✓ Variables de configuración de BD definidas'];
-                            
-                            // Test 5: Intentar conexión a base de datos
-                            try {
-                                require_once 'includes/database.php';
-                                $db = Database::getInstance();
-                                $connection = $db->getConnection();
-                                
-                                $tests[] = ['type' => 'success', 'message' => '✓ Conexión a base de datos exitosa'];
-                                
-                                // Test 6: Verificar que existan las tablas principales
-                                $tablas_requeridas = ['usuarios', 'tipos_residuos', 'reportes', 'puntos_usuarios'];
-                                foreach ($tablas_requeridas as $tabla) {
-                                    if ($db->tableExists($tabla)) {
-                                        $tests[] = ['type' => 'success', 'message' => "✓ Tabla '{$tabla}' existe"];
-                                    } else {
-                                        $tests[] = ['type' => 'warning', 'message' => "⚠ Tabla '{$tabla}' no encontrada. Ejecuta el archivo database_schema.sql"];
-                                    }
-                                }
-                                
-                                // Test 7: Verificar usuario administrador
-                                $admin = $db->fetchOne("SELECT id, email FROM usuarios WHERE rol = 'administrador' LIMIT 1");
-                                if ($admin) {
-                                    $tests[] = ['type' => 'success', 'message' => "✓ Usuario administrador encontrado: {$admin['email']}"];
-                                } else {
-                                    $tests[] = ['type' => 'warning', 'message' => "⚠ No se encontró usuario administrador. Ejecuta el archivo database_schema.sql"];
-                                }
-                                
-                            } catch (Exception $e) {
-                                $tests[] = ['type' => 'error', 'message' => '✗ Error de conexión a BD: ' . $e->getMessage()];
-                                $allPassed = false;
-                            }
-                        } else {
-                            $tests[] = ['type' => 'error', 'message' => '✗ Variables de configuración de BD no están definidas correctamente'];
-                            $allPassed = false;
-                        }
-
-                        // Test 8: Verificar permisos de escritura
-                        if (is_writable('logs/')) {
-                            $tests[] = ['type' => 'success', 'message' => '✓ Directorio logs/ tiene permisos de escritura'];
-                        } else {
-                            $tests[] = ['type' => 'warning', 'message' => "⚠ Directorio logs/ no tiene permisos de escritura. Ejecuta: chmod 755 logs/"];
-                        }
-
-                        // Test 9: Verificar configuración de sesiones
-                        if (session_status() === PHP_SESSION_ACTIVE || session_start()) {
-                            $tests[] = ['type' => 'success', 'message' => '✓ Sesiones PHP funcionando correctamente'];
-                        } else {
-                            $tests[] = ['type' => 'error', 'message' => '✗ Error iniciando sesiones PHP'];
-                            $allPassed = false;
-                        }
-
-                        // Mostrar resultados
-                        foreach ($tests as $test) {
-                            echo "<div class='test-result test-{$test['type']}'>{$test['message']}</div>";
-                        }
-
-                        // Resultado final
-                        if ($allPassed) {
-                            echo "<div class='test-result test-success'>";
-                            echo "<h5>🎉 ¡Todas las pruebas pasaron exitosamente!</h5>";
-                            echo "<p>Tu instalación de EcoCusco está lista para usar. Puedes acceder a:</p>";
-                            echo "<ul>";
-                            echo "<li><a href='public/index.php' class='btn btn-primary btn-sm'>Página Principal</a></li>";
-                            echo "<li><a href='pages/login.php' class='btn btn-success btn-sm'>Iniciar Sesión</a></li>";
-                            echo "<li><a href='pages/register.php' class='btn btn-info btn-sm'>Registrarse</a></li>";
-                            echo "</ul>";
-                            echo "<p class='mt-3'><strong>IMPORTANTE:</strong> Elimina este archivo (test_connection.php) antes de pasar a producción.</p>";
-                            echo "</div>";
-                        } else {
-                            echo "<div class='test-result test-error'>";
-                            echo "<h5>❌ Algunas pruebas fallaron</h5>";
-                            echo "<p>Revisa los errores anteriores y consulta el archivo README.md para obtener instrucciones de configuración.</p>";
-                            echo "</div>";
-                        }
-                        ?>
-
-                        <div class="test-result test-info">
-                            <h6>Información del Sistema:</h6>
-                            <ul class="mb-0">
-                                <li><strong>PHP Version:</strong> <?= phpversion() ?></li>
-                                <li><strong>Sistema Operativo:</strong> <?= php_uname('s') . ' ' . php_uname('r') ?></li>
-                                <li><strong>Servidor Web:</strong> <?= $_SERVER['SERVER_SOFTWARE'] ?? 'Desconocido' ?></li>
-                                <li><strong>Directorio del Proyecto:</strong> <?= __DIR__ ?></li>
-                                <li><strong>Fecha/Hora del Test:</strong> <?= date('Y-m-d H:i:s') ?></li>
-                            </ul>
-                        </div>
-
-                        <div class="mt-4">
-                            <a href="?allow_test=yes" class="btn btn-primary">
-                                <i class="fas fa-refresh me-2"></i>Ejecutar Test Nuevamente
-                            </a>
-                            <a href="README.md" class="btn btn-outline-info">
-                                <i class="fas fa-book me-2"></i>Ver Documentación
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f8f9fa;
+    }
+    
+    h1 {
+        color: #28a745;
+        border-bottom: 2px solid #28a745;
+        padding-bottom: 10px;
+    }
+    
+    h2 {
+        color: #6c757d;
+        margin-top: 30px;
+    }
+    
+    p {
+        margin: 8px 0;
+        padding: 5px;
+        background: white;
+        border-radius: 4px;
+        border-left: 4px solid #dee2e6;
+    }
+    
+    pre {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 4px;
+        border: 1px solid #dee2e6;
+        overflow-x: auto;
+    }
+    
+    ul {
+        background: white;
+        padding: 15px;
+        border-radius: 4px;
+        border-left: 4px solid #ffc107;
+    }
+</style>

@@ -1,105 +1,38 @@
-# EcoCusco .gitignore
-
-# Archivos de configuración sensibles
+# Variables de entorno
 .env
-config.local.php
 
 # Logs
-logs/
+storage/logs/*.log
 *.log
 
+# Uploads de usuarios
+public/uploads/*
+!public/uploads/.gitkeep
+
 # Archivos temporales
-tmp/
-temp/
-cache/
+*.tmp
+*.temp
 
-# Archivos de uploads de usuarios
-uploads/
-storage/uploads/
-
-# Archivos de backup
-*.sql
-*.gz
-*.bak
-backup/
-
-# Archivos del sistema operativo
+# Archivos del sistema
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 
-# Archivos del editor
-*.swp
-*.swo
-*~
+# IDEs
 .vscode/
 .idea/
-*.sublime-project
-*.sublime-workspace
+*.swp
+*.swo
 
-# Dependencias de PHP
-vendor/
-composer.lock
+# Composer
+/vendor/
 
-# Dependencias de Node.js (si se usan)
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Archivos de sesión
-sessions/
-*.sess
-
-# Archivos de caché
+# Cache
 cache/
 *.cache
 
-# Archivos de configuración de servidor web
-.htaccess.local
-nginx.local.conf
+# Backup files
+*.bak
+*.backup
 
-# Archivos de desarrollo
-*.dev
-*.local
-*.test
-
-# Archivos de certificados SSL (si se almacenan localmente)
-*.pem
-*.key
-*.crt
-*.csr
-
-# Archivos de testing
-phpunit.xml
-.phpunit.result.cache
-tests/_output/
-
-# Variables de entorno específicas de desarrollo
-.env.local
-.env.development
-.env.testing
-.env.production
-
-# Archivos compilados
-*.min.js
-*.min.css
-dist/
-build/
-
-# Documentación generada
-docs/generated/
-api-docs/
-
-# Archivos de profiling
-*.prof
-xhprof/
-
-# Archivos de error específicos
-error.log
-access.log
-php_errors.log
+# Error logs específicos de PHP
+error_log

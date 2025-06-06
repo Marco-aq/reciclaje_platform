@@ -1,236 +1,232 @@
--- EcoCusco Database Schema
--- Base de datos para la plataforma de gestión de residuos sólidos urbanos
+-- Base de Datos para Plataforma de Reciclaje MVC
+-- Creado para el proyecto reciclaje_platform_mvc_working
 
--- Configuración inicial
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
-
--- Crear base de datos si no existe
-CREATE DATABASE IF NOT EXISTS `reciclaje_platform` 
-DEFAULT CHARACTER SET utf8mb4 
-COLLATE utf8mb4_unicode_ci;
-
-USE `reciclaje_platform`;
+-- Crear base de datos
+CREATE DATABASE IF NOT EXISTS reciclaje_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE reciclaje_db;
 
 -- Tabla de usuarios
-DROP TABLE IF EXISTS `usuarios`;
-CREATE TABLE `usuarios` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) NOT NULL,
-  `apellido` varchar(100) NOT NULL,
-  `email` varchar(255) NOT NULL UNIQUE,
-  `password` varchar(255) NOT NULL,
-  `telefono` varchar(20) NULL,
-  `direccion` text NULL,
-  `rol` enum('usuario','administrador','supervisor') NOT NULL DEFAULT 'usuario',
-  `activo` tinyint(1) NOT NULL DEFAULT 1,
-  `remember_token` varchar(255) NULL,
-  `ultimo_acceso` datetime NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `idx_email` (`email`),
-  KEY `idx_activo` (`activo`),
-  KEY `idx_rol` (`rol`)
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_email (email),
+    INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Tabla de tipos de residuos
-DROP TABLE IF EXISTS `tipos_residuos`;
-CREATE TABLE `tipos_residuos` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) NOT NULL,
-  `descripcion` text NULL,
-  `puntos_por_kg` decimal(5,2) NOT NULL DEFAULT 10.00,
-  `activo` tinyint(1) NOT NULL DEFAULT 1,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `idx_activo` (`activo`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Insertar tipos de residuos básicos
-INSERT INTO `tipos_residuos` (`nombre`, `descripcion`, `puntos_por_kg`) VALUES
-('Plástico', 'Botellas, envases y otros plásticos reciclables', 10.00),
-('Papel', 'Papel, cartón y productos de papel', 8.00),
-('Vidrio', 'Botellas y envases de vidrio', 12.00),
-('Metal', 'Latas de aluminio y otros metales', 15.00),
-('Orgánico', 'Restos de comida y material orgánico compostable', 5.00);
 
 -- Tabla de reportes de reciclaje
-DROP TABLE IF EXISTS `reportes`;
-CREATE TABLE `reportes` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `usuario_id` int(11) NOT NULL,
-  `tipo_residuo_id` int(11) NOT NULL,
-  `descripcion` text NULL,
-  `cantidad` decimal(8,2) NOT NULL,
-  `unidad` varchar(10) NOT NULL DEFAULT 'kg',
-  `ubicacion` varchar(255) NULL,
-  `latitud` decimal(10,8) NULL,
-  `longitud` decimal(11,8) NULL,
-  `foto_path` varchar(255) NULL,
-  `estado` enum('pendiente','procesado','rechazado') NOT NULL DEFAULT 'pendiente',
-  `puntos_obtenidos` int(11) NOT NULL DEFAULT 0,
-  `notas_admin` text NULL,
-  `procesado_por` int(11) NULL,
-  `fecha_procesado` datetime NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `idx_usuario_id` (`usuario_id`),
-  KEY `idx_tipo_residuo_id` (`tipo_residuo_id`),
-  KEY `idx_estado` (`estado`),
-  KEY `idx_created_at` (`created_at`),
-  FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`tipo_residuo_id`) REFERENCES `tipos_residuos` (`id`) ON DELETE RESTRICT,
-  FOREIGN KEY (`procesado_por`) REFERENCES `usuarios` (`id`) ON DELETE SET NULL
+CREATE TABLE reportes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    tipo_material ENUM('plastico', 'papel', 'vidrio', 'metal', 'electronico', 'organico', 'textil', 'otros') NOT NULL,
+    cantidad DECIMAL(10,2) NOT NULL,
+    ubicacion VARCHAR(255) NOT NULL,
+    descripcion TEXT,
+    foto VARCHAR(255),
+    fecha_reporte TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    INDEX idx_usuario_id (usuario_id),
+    INDEX idx_tipo_material (tipo_material),
+    INDEX idx_fecha_reporte (fecha_reporte),
+    INDEX idx_ubicacion (ubicacion)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de puntos de usuarios
-DROP TABLE IF EXISTS `puntos_usuarios`;
-CREATE TABLE `puntos_usuarios` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `usuario_id` int(11) NOT NULL,
-  `puntos_totales` int(11) NOT NULL DEFAULT 0,
-  `puntos_canjeados` int(11) NOT NULL DEFAULT 0,
-  `puntos_disponibles` int(11) NOT NULL DEFAULT 0,
-  `nivel` varchar(50) NOT NULL DEFAULT 'Bronce',
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_usuario` (`usuario_id`),
-  FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+-- Tabla para tokens de recuperación de contraseña
+CREATE TABLE password_resets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(150) NOT NULL,
+    token VARCHAR(64) NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_email (email),
+    INDEX idx_token (token),
+    INDEX idx_expires_at (expires_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de historial de puntos
-DROP TABLE IF EXISTS `historial_puntos`;
-CREATE TABLE `historial_puntos` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `usuario_id` int(11) NOT NULL,
-  `reporte_id` int(11) NULL,
-  `tipo` enum('ganancia','canje','ajuste') NOT NULL,
-  `puntos` int(11) NOT NULL,
-  `descripcion` varchar(255) NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `idx_usuario_id` (`usuario_id`),
-  KEY `idx_reporte_id` (`reporte_id`),
-  KEY `idx_tipo` (`tipo`),
-  KEY `idx_created_at` (`created_at`),
-  FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`reporte_id`) REFERENCES `reportes` (`id`) ON DELETE SET NULL
+-- Tabla de sesiones (opcional, para gestión avanzada de sesiones)
+CREATE TABLE sessions (
+    id VARCHAR(128) NOT NULL PRIMARY KEY,
+    user_id INT,
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    payload LONGTEXT NOT NULL,
+    last_activity INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id),
+    INDEX idx_last_activity (last_activity)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de logros/achievements (opcional, para gamificación)
+CREATE TABLE logros (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    tipo_logro VARCHAR(50) NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    fecha_obtenido TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    INDEX idx_usuario_id (usuario_id),
+    INDEX idx_tipo_logro (tipo_logro),
+    UNIQUE KEY unique_user_achievement (usuario_id, tipo_logro)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla de configuración del sistema
-DROP TABLE IF EXISTS `configuracion`;
-CREATE TABLE `configuracion` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `clave` varchar(100) NOT NULL UNIQUE,
-  `valor` text NULL,
-  `descripcion` text NULL,
-  `tipo` enum('string','integer','boolean','json') NOT NULL DEFAULT 'string',
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `idx_clave` (`clave`)
+CREATE TABLE configuracion (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    clave VARCHAR(100) NOT NULL UNIQUE,
+    valor TEXT,
+    descripcion TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_clave (clave)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Insertar configuraciones básicas
-INSERT INTO `configuracion` (`clave`, `valor`, `descripcion`, `tipo`) VALUES
-('app_name', 'EcoCusco', 'Nombre de la aplicación', 'string'),
-('puntos_minimos_canje', '100', 'Puntos mínimos requeridos para canje', 'integer'),
-('max_reportes_diarios', '10', 'Máximo número de reportes por día por usuario', 'integer'),
-('enable_geolocation', 'true', 'Habilitar geolocalización en reportes', 'boolean'),
-('email_notificaciones', 'true', 'Enviar notificaciones por email', 'boolean');
+-- Insertar configuración inicial
+INSERT INTO configuracion (clave, valor, descripcion) VALUES
+('app_version', '1.0.0', 'Versión actual de la aplicación'),
+('maintenance_mode', 'false', 'Modo de mantenimiento activado'),
+('registrations_enabled', 'true', 'Permitir nuevos registros'),
+('max_upload_size', '5242880', 'Tamaño máximo de archivos en bytes (5MB)'),
+('points_per_kg', '10', 'Puntos otorgados por kilogramo reciclado');
 
--- Tabla de logs del sistema
-DROP TABLE IF EXISTS `logs`;
-CREATE TABLE `logs` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nivel` enum('info','warning','error','debug') NOT NULL DEFAULT 'info',
-  `mensaje` text NOT NULL,
-  `contexto` json NULL,
-  `usuario_id` int(11) NULL,
-  `ip_address` varchar(45) NULL,
-  `user_agent` text NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `idx_nivel` (`nivel`),
-  KEY `idx_usuario_id` (`usuario_id`),
-  KEY `idx_created_at` (`created_at`),
-  FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Crear usuario de ejemplo (contraseña: demo123)
+-- Nota: Esta contraseña está hasheada con el salt por defecto
+INSERT INTO usuarios (nombre, email, password) VALUES
+('Usuario Demo', 'demo@ejemplo.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
 
--- Crear usuario administrador por defecto
-INSERT INTO `usuarios` (`nombre`, `apellido`, `email`, `password`, `rol`, `created_at`) VALUES
-('Administrador', 'Sistema', 'admin@ecocusco.pe', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'administrador', NOW());
+-- Insertar algunos reportes de ejemplo
+INSERT INTO reportes (usuario_id, tipo_material, cantidad, ubicacion, descripcion, fecha_reporte) VALUES
+(1, 'plastico', 2.5, 'Centro de la Ciudad', 'Botellas de agua y refrescos', NOW() - INTERVAL 1 DAY),
+(1, 'papel', 1.8, 'Oficina Central', 'Documentos y periódicos', NOW() - INTERVAL 2 DAY),
+(1, 'vidrio', 3.2, 'Casa', 'Frascos y botellas de vidrio', NOW() - INTERVAL 3 DAY),
+(1, 'metal', 0.8, 'Taller Mecánico', 'Latas de aluminio', NOW() - INTERVAL 4 DAY),
+(1, 'electronico', 1.5, 'Centro de Reciclaje', 'Cables y componentes', NOW() - INTERVAL 5 DAY);
 
--- Inicializar puntos para el usuario administrador
-INSERT INTO `puntos_usuarios` (`usuario_id`, `puntos_totales`, `puntos_disponibles`, `nivel`) VALUES
-(1, 0, 0, 'Bronce');
+-- Vista para estadísticas rápidas
+CREATE VIEW vista_estadisticas_generales AS
+SELECT 
+    COUNT(DISTINCT u.id) as total_usuarios,
+    COUNT(r.id) as total_reportes,
+    SUM(r.cantidad) as total_materiales_kg,
+    COUNT(DISTINCT r.ubicacion) as ubicaciones_unicas,
+    AVG(r.cantidad) as promedio_cantidad_reporte
+FROM usuarios u
+LEFT JOIN reportes r ON u.id = r.usuario_id;
 
--- Crear triggers para automatizar el cálculo de puntos
+-- Vista para ranking de usuarios
+CREATE VIEW vista_ranking_usuarios AS
+SELECT 
+    u.id,
+    u.nombre,
+    u.email,
+    COUNT(r.id) as total_reportes,
+    COALESCE(SUM(r.cantidad), 0) as total_kg_reciclados,
+    COALESCE(SUM(r.cantidad * 10), 0) as puntos_totales,
+    MAX(r.fecha_reporte) as ultimo_reporte
+FROM usuarios u
+LEFT JOIN reportes r ON u.id = r.usuario_id
+GROUP BY u.id, u.nombre, u.email
+ORDER BY puntos_totales DESC, total_reportes DESC;
 
-DELIMITER $$
+-- Vista para estadísticas por tipo de material
+CREATE VIEW vista_materiales_estadisticas AS
+SELECT 
+    tipo_material,
+    COUNT(*) as cantidad_reportes,
+    SUM(cantidad) as total_kg,
+    AVG(cantidad) as promedio_kg,
+    COUNT(DISTINCT usuario_id) as usuarios_unicos
+FROM reportes
+GROUP BY tipo_material
+ORDER BY total_kg DESC;
 
--- Trigger para actualizar puntos cuando se procesa un reporte
-CREATE TRIGGER `tr_actualizar_puntos_reporte` 
-AFTER UPDATE ON `reportes`
-FOR EACH ROW
+-- Función para calcular CO2 evitado (aproximado)
+DELIMITER //
+CREATE FUNCTION calcular_co2_evitado(tipo VARCHAR(20), cantidad DECIMAL(10,2))
+RETURNS DECIMAL(10,2)
+READS SQL DATA
+DETERMINISTIC
 BEGIN
-    -- Solo cuando el estado cambia de 'pendiente' a 'procesado'
-    IF OLD.estado = 'pendiente' AND NEW.estado = 'procesado' AND NEW.puntos_obtenidos > 0 THEN
-        -- Actualizar puntos del usuario
-        INSERT INTO `puntos_usuarios` (`usuario_id`, `puntos_totales`, `puntos_disponibles`)
-        VALUES (NEW.usuario_id, NEW.puntos_obtenidos, NEW.puntos_obtenidos)
-        ON DUPLICATE KEY UPDATE
-            `puntos_totales` = `puntos_totales` + NEW.puntos_obtenidos,
-            `puntos_disponibles` = `puntos_disponibles` + NEW.puntos_obtenidos;
-        
-        -- Registrar en historial
-        INSERT INTO `historial_puntos` (`usuario_id`, `reporte_id`, `tipo`, `puntos`, `descripcion`)
-        VALUES (NEW.usuario_id, NEW.id, 'ganancia', NEW.puntos_obtenidos, 
-                CONCAT('Puntos por reporte de ', (SELECT nombre FROM tipos_residuos WHERE id = NEW.tipo_residuo_id)));
-        
-        -- Actualizar nivel del usuario
-        CALL sp_actualizar_nivel_usuario(NEW.usuario_id);
-    END IF;
-END$$
-
--- Procedimiento para actualizar nivel del usuario
-CREATE PROCEDURE `sp_actualizar_nivel_usuario`(IN p_usuario_id INT)
-BEGIN
-    DECLARE v_puntos_totales INT DEFAULT 0;
-    DECLARE v_nuevo_nivel VARCHAR(50) DEFAULT 'Bronce';
+    DECLARE factor DECIMAL(4,2) DEFAULT 1.0;
     
-    -- Obtener puntos totales del usuario
-    SELECT puntos_totales INTO v_puntos_totales 
-    FROM puntos_usuarios 
-    WHERE usuario_id = p_usuario_id;
+    CASE tipo
+        WHEN 'plastico' THEN SET factor = 2.0;
+        WHEN 'papel' THEN SET factor = 3.3;
+        WHEN 'vidrio' THEN SET factor = 0.5;
+        WHEN 'metal' THEN SET factor = 6.0;
+        WHEN 'electronico' THEN SET factor = 4.0;
+        WHEN 'organico' THEN SET factor = 0.3;
+        WHEN 'textil' THEN SET factor = 2.5;
+        ELSE SET factor = 1.0;
+    END CASE;
     
-    -- Determinar nivel según puntos
-    IF v_puntos_totales >= 5000 THEN
-        SET v_nuevo_nivel = 'Oro';
-    ELSEIF v_puntos_totales >= 2000 THEN
-        SET v_nuevo_nivel = 'Plata';
-    ELSE
-        SET v_nuevo_nivel = 'Bronce';
-    END IF;
-    
-    -- Actualizar nivel
-    UPDATE puntos_usuarios 
-    SET nivel = v_nuevo_nivel 
-    WHERE usuario_id = p_usuario_id;
-END$$
-
+    RETURN cantidad * factor;
+END //
 DELIMITER ;
 
--- Crear índices adicionales para optimización
-CREATE INDEX `idx_reportes_usuario_fecha` ON `reportes` (`usuario_id`, `created_at`);
-CREATE INDEX `idx_reportes_estado_fecha` ON `reportes` (`estado`, `created_at`);
-CREATE INDEX `idx_historial_usuario_fecha` ON `historial_puntos` (`usuario_id`, `created_at`);
+-- Procedimiento para limpiar datos antiguos
+DELIMITER //
+CREATE PROCEDURE limpiar_datos_antiguos()
+BEGIN
+    -- Limpiar tokens de recuperación expirados
+    DELETE FROM password_resets WHERE expires_at < NOW();
+    
+    -- Limpiar sesiones antiguas (más de 30 días)
+    DELETE FROM sessions WHERE last_activity < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 30 DAY));
+    
+    -- Log de la limpieza
+    INSERT INTO configuracion (clave, valor, descripcion) 
+    VALUES (CONCAT('limpieza_', DATE_FORMAT(NOW(), '%Y%m%d')), NOW(), 'Última limpieza de datos')
+    ON DUPLICATE KEY UPDATE valor = NOW();
+END //
+DELIMITER ;
 
--- Restaurar configuración
-SET FOREIGN_KEY_CHECKS = 1;
+-- Trigger para actualizar updated_at automáticamente
+DELIMITER //
+CREATE TRIGGER tr_usuarios_updated_at
+    BEFORE UPDATE ON usuarios
+    FOR EACH ROW
+BEGIN
+    SET NEW.updated_at = CURRENT_TIMESTAMP;
+END //
 
--- Información sobre la base de datos
-SELECT 'Base de datos EcoCusco creada exitosamente' as resultado;
-SELECT COUNT(*) as total_tablas FROM information_schema.tables WHERE table_schema = 'reciclaje_platform';
+CREATE TRIGGER tr_reportes_updated_at
+    BEFORE UPDATE ON reportes
+    FOR EACH ROW
+BEGIN
+    SET NEW.updated_at = CURRENT_TIMESTAMP;
+END //
+DELIMITER ;
+
+-- Índices adicionales para optimización
+CREATE INDEX idx_reportes_fecha_usuario ON reportes(fecha_reporte, usuario_id);
+CREATE INDEX idx_reportes_tipo_fecha ON reportes(tipo_material, fecha_reporte);
+CREATE INDEX idx_usuarios_nombre ON usuarios(nombre);
+
+-- Configurar el motor de almacenamiento y charset
+ALTER TABLE usuarios ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+ALTER TABLE reportes ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+ALTER TABLE password_resets ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+ALTER TABLE configuracion ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Comentarios de documentación
+ALTER TABLE usuarios COMMENT = 'Tabla de usuarios del sistema de reciclaje';
+ALTER TABLE reportes COMMENT = 'Tabla de reportes de actividades de reciclaje';
+ALTER TABLE password_resets COMMENT = 'Tabla para tokens de recuperación de contraseña';
+ALTER TABLE configuracion COMMENT = 'Tabla de configuración del sistema';
+
+-- Verificar la estructura creada
+SHOW TABLES;
+
+-- Mostrar estadísticas iniciales
+SELECT * FROM vista_estadisticas_generales;
+SELECT * FROM vista_ranking_usuarios;
+SELECT * FROM vista_materiales_estadisticas;
+
+-- Mensaje de finalización
+SELECT 'Base de datos creada exitosamente' as status;

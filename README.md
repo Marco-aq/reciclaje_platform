@@ -1,333 +1,453 @@
-# EcoCusco - Plataforma de Gestión de Residuos Sólidos Urbanos
+# Plataforma de Reciclaje MVC
 
-## Descripción
+Una aplicación web completa desarrollada con arquitectura MVC para la gestión y seguimiento de actividades de reciclaje. Permite a los usuarios reportar sus actividades de reciclaje, visualizar estadísticas y realizar un seguimiento de su impacto ambiental.
 
-EcoCusco es una plataforma web simplificada y funcional para la gestión de residuos sólidos urbanos en Cusco, Perú. Esta versión ha sido optimizada para resolver problemas de conectividad a la base de datos y proporcionar una experiencia de usuario fluida.
+## 🌟 Características
 
-## Características Principales
+- **Arquitectura MVC**: Separación clara de responsabilidades
+- **Sistema de Autenticación**: Registro, login y recuperación de contraseña
+- **Gestión de Reportes**: CRUD completo para reportes de reciclaje
+- **Dashboard Interactivo**: Estadísticas personalizadas y generales
+- **Análisis de Datos**: Gráficos y visualizaciones avanzadas
+- **Sistema de Puntos**: Gamificación para motivar el reciclaje
+- **Responsive Design**: Compatible con dispositivos móviles
+- **API REST**: Endpoints para integración externa
+- **Seguridad**: Protección CSRF, validación de datos, sanitización
 
-- ✅ **Conexión de Base de Datos Estable**: Sistema simplificado que funciona sin errores
-- ✅ **Autenticación Segura**: Registro e inicio de sesión con validación robusta
-- ✅ **Dashboard Interactivo**: Panel de control con estadísticas en tiempo real
-- ✅ **Gestión de Reportes**: Sistema completo para reportar y gestionar residuos
-- ✅ **Estadísticas Visuales**: Gráficos y análisis de datos de reciclaje
-- ✅ **Sistema de Puntos**: Gamificación para incentivar el reciclaje
-- ✅ **Diseño Responsivo**: Compatible con dispositivos móviles y desktop
-- ✅ **Configuración Simple**: Archivo .env para configuración fácil
+## 🛠️ Tecnologías Utilizadas
 
-## Arquitectura Simplificada
+- **Backend**: PHP 7.4+
+- **Base de Datos**: MySQL 8.0+
+- **Frontend**: HTML5, CSS3, JavaScript ES6+
+- **Frameworks CSS**: Bootstrap 5
+- **Gráficos**: Chart.js
+- **Iconos**: Font Awesome
+- **Arquitectura**: MVC (Model-View-Controller)
 
-```
-reciclaje_platform_fixed/
-├── public/                     # Punto de entrada público
-│   ├── index.php              # Página principal
-│   └── assets/                # Recursos estáticos (CSS, JS, img)
-├── includes/                  # Lógica de backend
-│   ├── config.php            # Configuración principal
-│   ├── database.php          # Clase Database (Singleton)
-│   └── functions.php         # Funciones utilitarias
-├── pages/                     # Páginas de la aplicación
-│   ├── login.php             # Inicio de sesión
-│   ├── register.php          # Registro de usuarios
-│   ├── dashboard.php         # Panel principal
-│   ├── reportes.php          # Gestión de reportes
-│   ├── estadisticas.php      # Estadísticas y gráficos
-│   └── logout.php            # Cerrar sesión
-├── components/                # Componentes reutilizables
-│   ├── header.php            # Navegación principal
-│   └── footer.php            # Pie de página
-├── .env                       # Variables de entorno
-├── database_schema.sql        # Esquema de base de datos
-└── README.md                  # Documentación
-```
+## 📋 Requisitos del Sistema
 
-## Instalación y Configuración
-
-### Requisitos Previos
-
-- PHP 8.0 o superior
-- MySQL 5.7 o superior / MariaDB 10.3 o superior
+- PHP 7.4 o superior
+- MySQL 8.0 o superior
 - Servidor web (Apache/Nginx)
-- Extensiones PHP: PDO, PDO_MySQL, mbstring, openssl
+- Extensiones PHP requeridas:
+  - PDO
+  - MySQL
+  - mbstring
+  - fileinfo
+  - GD (opcional, para manipulación de imágenes)
 
-### Paso 1: Clonar o Copiar los Archivos
+## 🚀 Instalación
+
+### 1. Clonar el repositorio
 
 ```bash
-# Copiar todos los archivos al directorio de tu servidor web
-cp -r reciclaje_platform_fixed/ /var/www/html/ecocusco/
+git clone <URL_DEL_REPOSITORIO>
+cd reciclaje_platform_mvc_working
 ```
 
-### Paso 2: Configurar la Base de Datos
+### 2. Configurar el entorno
 
-1. **Crear la base de datos:**
-```sql
-CREATE DATABASE reciclaje_platform CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-2. **Importar el esquema:**
+1. Copiar el archivo de configuración:
 ```bash
-mysql -u tu_usuario -p reciclaje_platform < database_schema.sql
+cp .env.example .env
 ```
 
-### Paso 3: Configurar Variables de Entorno
-
-Edita el archivo `.env` con tus configuraciones:
-
+2. Editar `.env` con tus configuraciones:
 ```env
-# Configuración de la aplicación
-APP_NAME="EcoCusco - Gestión de Residuos"
+# Configuración de Base de Datos
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=reciclaje_db
+DB_USER=tu_usuario
+DB_PASSWORD=tu_contraseña
+
+# Configuración de la Aplicación
+APP_NAME="Plataforma de Reciclaje"
 APP_ENV=production
 APP_DEBUG=false
 APP_URL=http://tu-dominio.com
 
-# Configuración de base de datos
-DB_HOST=localhost
-DB_PORT=3306
-DB_DATABASE=reciclaje_platform
-DB_USERNAME=tu_usuario
-DB_PASSWORD=tu_contraseña
-
-# Configuración de sesiones
-SESSION_LIFETIME=120
-SESSION_NAME=ecocusco_session
-
-# Configuración de archivos
-UPLOAD_MAX_SIZE=10485760
-ALLOWED_FILE_TYPES=jpg,jpeg,png,pdf
-
-# Configuración de seguridad
-BCRYPT_ROUNDS=10
+# Configuración de Seguridad
+APP_KEY=tu_clave_secreta_aqui_cambiar_en_produccion
+SALT=tu_salt_personalizado
 ```
 
-### Paso 4: Configurar Permisos
+### 3. Configurar la base de datos
+
+1. Crear la base de datos:
+```sql
+CREATE DATABASE reciclaje_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+2. Importar el esquema:
+```bash
+mysql -u tu_usuario -p reciclaje_db < database_schema.sql
+```
+
+### 4. Configurar permisos
 
 ```bash
-# Dar permisos de escritura a directorios necesarios
-chmod 755 /ruta/a/ecocusco/
-chmod 644 /ruta/a/ecocusco/.env
-mkdir -p /ruta/a/ecocusco/logs/
-chmod 755 /ruta/a/ecocusco/logs/
+# Permisos para directorios de escritura
+chmod 755 storage/logs/
+chmod 755 public/uploads/
+
+# Asegurar que el servidor web puede escribir
+chown -R www-data:www-data storage/
+chown -R www-data:www-data public/uploads/
 ```
 
-### Paso 5: Configurar Servidor Web
+### 5. Configurar servidor web
 
 #### Apache (.htaccess)
-
-Crea un archivo `.htaccess` en la carpeta `public/`:
-
 ```apache
 RewriteEngine On
-
-# Redirigir a HTTPS (opcional)
-# RewriteCond %{HTTPS} off
-# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-# Seguridad
-<FilesMatch "\.(env|log|sql)$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-
-# Cache de archivos estáticos
-<IfModule mod_expires.c>
-    ExpiresActive On
-    ExpiresByType text/css "access plus 1 month"
-    ExpiresByType application/javascript "access plus 1 month"
-    ExpiresByType image/png "access plus 1 year"
-    ExpiresByType image/svg+xml "access plus 1 year"
-</IfModule>
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
 ```
 
 #### Nginx
-
 ```nginx
-server {
-    listen 80;
-    server_name tu-dominio.com;
-    root /var/www/html/ecocusco/public;
-    index index.php;
+location / {
+    try_files $uri $uri/ /index.php?$query_string;
+}
 
-    # Seguridad - denegar acceso a archivos sensibles
-    location ~ /\.(env|log|sql) {
-        deny all;
-        return 404;
-    }
-
-    # Archivos estáticos
-    location ~* \.(css|js|png|jpg|jpeg|gif|svg|ico)$ {
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-    }
-
-    # PHP
-    location ~ \.php$ {
-        try_files $uri =404;
-        fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_pass unix:/var/run/php/php8.0-fpm.sock;
-        fastcgi_index index.php;
-        include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-    }
-
-    # Fallback para rutas
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
+location ~ \.php$ {
+    fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+    fastcgi_index index.php;
+    fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+    include fastcgi_params;
 }
 ```
 
-## Cuentas de Acceso
+## 🔧 Configuración
 
-### Administrador por Defecto
+### Variables de Entorno
 
-- **Email:** `admin@ecocusco.pe`
-- **Contraseña:** `password` 
+| Variable | Descripción | Valor por defecto |
+|----------|-------------|-------------------|
+| `DB_HOST` | Host de la base de datos | localhost |
+| `DB_PORT` | Puerto de la base de datos | 3306 |
+| `DB_NAME` | Nombre de la base de datos | reciclaje_db |
+| `DB_USER` | Usuario de la base de datos | root |
+| `DB_PASSWORD` | Contraseña de la base de datos | (vacío) |
+| `APP_NAME` | Nombre de la aplicación | Plataforma de Reciclaje |
+| `APP_ENV` | Entorno de la aplicación | production |
+| `APP_DEBUG` | Modo debug | false |
+| `APP_URL` | URL base de la aplicación | http://localhost |
+| `APP_KEY` | Clave de encriptación | (generar una segura) |
+| `SALT` | Salt para contraseñas | (generar uno seguro) |
 
-⚠️ **IMPORTANTE:** Cambia esta contraseña inmediatamente después de la instalación.
+### Configuración de Uploads
 
-### Crear Nuevos Usuarios
+- Tamaño máximo: 5MB (configurable en `config/app.php`)
+- Tipos permitidos: jpg, jpeg, png, gif, pdf
+- Directorio: `public/uploads/`
 
-Los usuarios pueden registrarse libremente a través de la página de registro o el administrador puede crearlos desde el panel de administración.
+## 📖 Uso
 
-## Funcionalidades Principales
+### Acceso Inicial
 
-### 1. **Sistema de Autenticación**
-- Registro de usuarios con validación
-- Inicio de sesión seguro
-- Recuperación de contraseñas
-- Sesiones persistentes opcionales
+1. Visita tu dominio en el navegador
+2. Crea una cuenta o usa las credenciales de demo:
+   - Email: `demo@ejemplo.com`
+   - Contraseña: `demo123`
 
-### 2. **Dashboard Interactivo**
+### Funcionalidades Principales
+
+#### 📊 Dashboard
 - Estadísticas personales de reciclaje
-- Gráficos de progreso
-- Actividad reciente
+- Gráficos interactivos
 - Ranking de usuarios
+- Impacto ambiental calculado
 
-### 3. **Gestión de Reportes**
-- Crear reportes de reciclaje
-- Filtros avanzados de búsqueda
-- Estados de procesamiento
-- Historial completo
+#### 📝 Gestión de Reportes
+- Crear nuevos reportes de reciclaje
+- Editar reportes existentes
+- Subir fotos de evidencia
+- Filtrar y buscar reportes
 
-### 4. **Sistema de Estadísticas**
-- Análisis temporal de datos
-- Distribución por tipo de residuo
-- Métricas de rendimiento
-- Exportación de datos
+#### 📈 Estadísticas
+- Análisis detallado de datos
+- Comparativas por períodos
+- Proyecciones de tendencias
+- Exportación de datos (CSV/JSON)
 
-### 5. **Sistema de Puntos y Gamificación**
-- Puntos por cantidad reciclada
-- Niveles de usuario (Bronce, Plata, Oro)
-- Rankings y competencias
-- Historial de puntos
+#### 👤 Perfil de Usuario
+- Actualizar información personal
+- Cambiar contraseña
+- Ver historial de actividad
 
-## Seguridad
+## 🔌 API
+
+### Endpoints Disponibles
+
+#### Autenticación
+```
+POST /api/login          - Iniciar sesión
+POST /api/register       - Registrar usuario
+POST /api/logout         - Cerrar sesión
+GET  /api/check-auth     - Verificar autenticación
+```
+
+#### Reportes
+```
+GET    /api/reportes           - Listar reportes
+POST   /api/reportes           - Crear reporte
+GET    /api/reportes/{id}      - Obtener reporte
+PUT    /api/reportes/{id}      - Actualizar reporte
+DELETE /api/reportes/{id}      - Eliminar reporte
+```
+
+#### Estadísticas
+```
+GET /api/estadisticas/datos    - Datos generales
+GET /api/estadisticas/graficos - Datos para gráficos
+```
+
+### Ejemplo de Uso
+
+```javascript
+// Crear un nuevo reporte
+fetch('/api/reportes', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+    },
+    body: JSON.stringify({
+        tipo_material: 'plastico',
+        cantidad: 2.5,
+        ubicacion: 'Centro de la Ciudad',
+        descripcion: 'Botellas de agua'
+    })
+})
+.then(response => response.json())
+.then(data => console.log(data));
+```
+
+## 🏗️ Arquitectura
+
+### Estructura de Directorios
+
+```
+reciclaje_platform_mvc_working/
+├── app/                          # Código de la aplicación
+│   ├── Core/                     # Núcleo del framework
+│   │   ├── App.php              # Clase principal
+│   │   ├── Controller.php       # Controlador base
+│   │   ├── Database.php         # Manejo de BD
+│   │   ├── Model.php            # Modelo base
+│   │   ├── Router.php           # Enrutamiento
+│   │   └── View.php             # Sistema de vistas
+│   ├── Controllers/             # Controladores
+│   ├── Models/                  # Modelos
+│   └── Views/                   # Vistas
+├── config/                      # Configuración
+├── public/                      # Archivos públicos
+│   ├── assets/                  # CSS, JS, imágenes
+│   └── uploads/                 # Archivos subidos
+├── storage/                     # Almacenamiento
+│   └── logs/                    # Logs del sistema
+├── .env                         # Variables de entorno
+├── .env.example                 # Ejemplo de configuración
+├── database_schema.sql          # Esquema de BD
+└── index.php                    # Punto de entrada
+```
+
+### Patrón MVC
+
+#### Modelos (Models)
+- `User.php`: Gestión de usuarios
+- `Report.php`: Gestión de reportes
+- `Stats.php`: Estadísticas y análisis
+
+#### Vistas (Views)
+- `layouts/main.php`: Layout principal
+- `home/`: Páginas públicas
+- `auth/`: Autenticación
+- `dashboard/`: Panel de usuario
+- `reports/`: Gestión de reportes
+
+#### Controladores (Controllers)
+- `HomeController.php`: Página principal
+- `AuthController.php`: Autenticación
+- `DashboardController.php`: Panel de usuario
+- `ReportController.php`: Gestión de reportes
+- `StatsController.php`: Estadísticas
+
+## 🔒 Seguridad
 
 ### Medidas Implementadas
 
-- ✅ Protección CSRF en formularios
-- ✅ Validación y sanitización de entradas
-- ✅ Contraseñas hasheadas con bcrypt
-- ✅ Sesiones seguras con cookies HttpOnly
-- ✅ Validación de tipos de archivo
-- ✅ Prevención de XSS
-- ✅ Logging de eventos de seguridad
+1. **Protección CSRF**: Tokens en formularios
+2. **Validación de Datos**: Sanitización de entradas
+3. **Prepared Statements**: Prevención de SQL injection
+4. **Hash de Contraseñas**: bcrypt con salt personalizado
+5. **Validación de Archivos**: Tipos y tamaños permitidos
+6. **Escape de Salida**: Prevención de XSS
 
-### Recomendaciones Adicionales
+### Configuración de Seguridad
 
-1. **Usar HTTPS en producción**
-2. **Configurar firewall apropiado**
-3. **Mantener PHP y MySQL actualizados**
-4. **Realizar backups regulares**
-5. **Monitorear logs de seguridad**
-
-## Mantenimiento
-
-### Logs del Sistema
-
-Los logs se almacenan en `/logs/app.log` y incluyen:
-- Eventos de autenticación
-- Errores de aplicación
-- Acciones administrativas
-- Estadísticas de uso
-
-### Backup de Base de Datos
-
-```bash
-# Crear backup
-mysqldump -u usuario -p reciclaje_platform > backup_$(date +%Y%m%d_%H%M%S).sql
-
-# Restaurar backup
-mysql -u usuario -p reciclaje_platform < backup_archivo.sql
+```php
+// Ejemplo de configuración en config/app.php
+'security' => [
+    'password_min_length' => 6,
+    'session_regenerate' => true,
+    'csrf_protection' => true,
+],
 ```
 
-### Optimización
+## 🧪 Testing
 
-1. **Configurar caché de PHP OPcache**
-2. **Optimizar consultas de base de datos**
-3. **Comprimir archivos estáticos**
-4. **Configurar CDN para recursos**
+### Testing Manual
 
-## Solución de Problemas
+1. Registro de usuario
+2. Login/logout
+3. Creación de reportes
+4. Edición de reportes
+5. Visualización de estadísticas
+6. Upload de archivos
 
-### Error de Conexión a Base de Datos
+### Casos de Prueba
 
-1. Verificar configuración en `.env`
-2. Confirmar que el servicio MySQL esté activo
-3. Validar permisos de usuario de base de datos
-4. Revisar logs en `/logs/app.log`
+- ✅ Validación de formularios
+- ✅ Manejo de errores de BD
+- ✅ Protección CSRF
+- ✅ Sanitización de datos
+- ✅ Responsive design
 
-### Errores de Permisos
+## 📊 Base de Datos
 
-```bash
-# Ajustar permisos de archivos
-find /ruta/a/ecocusco -type f -exec chmod 644 {} \;
-find /ruta/a/ecocusco -type d -exec chmod 755 {} \;
-chmod 755 /ruta/a/ecocusco/logs/
+### Tablas Principales
+
+#### usuarios
+- Información de usuarios registrados
+- Autenticación y perfiles
+
+#### reportes
+- Reportes de actividades de reciclaje
+- Relación con usuarios
+
+#### password_resets
+- Tokens para recuperación de contraseña
+
+#### configuracion
+- Configuración del sistema
+
+### Vistas y Funciones
+
+- `vista_estadisticas_generales`: Estadísticas rápidas
+- `vista_ranking_usuarios`: Ranking de usuarios
+- `calcular_co2_evitado()`: Cálculo de impacto ambiental
+
+## 🔄 Mantenimiento
+
+### Logs
+
+Los logs se almacenan en `storage/logs/`:
+- `app.log`: Log general de la aplicación
+- `database.log`: Log de base de datos
+- `contact.log`: Mensajes de contacto
+
+### Limpieza de Datos
+
+Ejecutar periódicamente:
+```sql
+CALL limpiar_datos_antiguos();
 ```
 
-### Problemas de Sesión
+### Backup
 
-1. Verificar configuración de sesiones en `config.php`
-2. Confirmar permisos en directorio de sesiones
-3. Revisar configuración de cookies
+Recomendado hacer backup diario:
+```bash
+mysqldump -u usuario -p reciclaje_db > backup_$(date +%Y%m%d).sql
+```
 
-## Desarrollo y Personalización
+## 🚨 Solución de Problemas
 
-### Agregar Nuevas Páginas
+### Errores Comunes
 
-1. Crear archivo PHP en `/pages/`
-2. Incluir archivos de configuración necesarios
-3. Usar componentes de header y footer
-4. Seguir patrones de validación y seguridad
+#### Error de conexión a BD
+1. Verificar credenciales en `.env`
+2. Comprobar que el servicio MySQL esté activo
+3. Verificar permisos del usuario de BD
 
-### Modificar Estilos
+#### Errores de permisos
+```bash
+# Corregir permisos
+chmod 755 storage/logs/
+chmod 755 public/uploads/
+chown -R www-data:www-data storage/
+```
 
-1. Editar `/public/assets/css/style.css`
-2. Usar variables CSS para consistencia
-3. Mantener diseño responsivo
+#### Error 404 en rutas
+1. Verificar configuración de servidor web
+2. Comprobar archivo `.htaccess` (Apache)
+3. Verificar configuración Nginx
 
-### Extensiones Recomendadas
+### Debug
 
-- Sistema de notificaciones por email
-- Integración con APIs de mapas
-- Dashboard administrativo avanzado
-- Módulo de reportes PDF automatizados
-- API REST para aplicaciones móviles
+Para activar el modo debug:
+```env
+APP_DEBUG=true
+```
 
-## Soporte
+## 🤝 Contribución
 
-Para soporte técnico o reportar problemas:
+### Pautas de Desarrollo
 
-1. Revisar este README
-2. Consultar logs de aplicación
-3. Verificar configuración de entorno
-4. Documentar pasos para reproducir errores
+1. Seguir PSR-4 para autoloading
+2. Documentar código con PHPDoc
+3. Usar nombres descriptivos
+4. Validar todas las entradas
+5. Manejar errores apropiadamente
 
-## Licencia
+### Estructura de Commits
 
-Este proyecto es software libre desarrollado para contribuir al desarrollo sostenible de Cusco, Perú.
+```
+tipo(scope): descripción
+
+feat(auth): agregar recuperación de contraseña
+fix(reports): corregir validación de fechas
+docs(readme): actualizar instrucciones de instalación
+```
+
+## 📝 Changelog
+
+### v1.0.0 (2025-01-07)
+- ✨ Implementación inicial del sistema MVC
+- 🔐 Sistema de autenticación completo
+- 📊 Dashboard con estadísticas
+- 📝 Gestión de reportes CRUD
+- 📈 Sistema de análisis y gráficos
+- 🎨 Diseño responsive con Bootstrap 5
+- 🔌 API REST funcional
+- 🛡️ Medidas de seguridad implementadas
+
+## 📄 Licencia
+
+Este proyecto está licenciado bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+
+## 👥 Autores
+
+- **Desarrollador Principal**: [Tu Nombre]
+- **Contribuidores**: Ver `CONTRIBUTORS.md`
+
+## 📞 Soporte
+
+Para soporte técnico:
+- 📧 Email: soporte@plataforma-reciclaje.com
+- 📋 Issues: [GitHub Issues]
+- 📖 Wiki: [Documentación Wiki]
+
+## 🙏 Agradecimientos
+
+- Bootstrap por el framework CSS
+- Chart.js por las visualizaciones
+- Font Awesome por los iconos
+- Comunidad PHP por las mejores prácticas
 
 ---
 
-**EcoCusco v1.0** - Plataforma Simple y Funcional para la Gestión de Residuos Sólidos Urbanos
+**¡Gracias por usar la Plataforma de Reciclaje MVC! Juntos construimos un futuro más sostenible. 🌱**
